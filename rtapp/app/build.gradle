@@ -1,0 +1,42 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android' version '1.9.23'
+}
+
+android {
+    namespace "com.example.rtapp"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.rtapp"
+        minSdk 23
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        ndk {
+            abiFilters "arm64-v8a"  // smallest APK; correct ABI for Samsung S21 FE
+        }
+
+        // Ensure .tflite model is stored uncompressed inside APK
+        aaptOptions {
+            noCompress "tflite"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            // Debug build is simpler for now; no R8 shrinking
+        }
+    }
+}
+
+dependencies {
+    // Minimal and stable TensorFlow Lite Interpreter API only
+    implementation "org.tensorflow:tensorflow-lite:2.14.0"
+}
