@@ -15,10 +15,11 @@ android {
         versionName "1.0"
 
         ndk {
-            abiFilters "arm64-v8a"  // Build only for ARM64 to minimize APK size
+            // Smallest APK, only ARM64 (S21 FE is arm64-v8a)
+            abiFilters "arm64-v8a"
         }
 
-        // Prevent .tflite files from being compressed
+        // Keep the model uncompressed inside the APK
         aaptOptions {
             noCompress "tflite"
         }
@@ -33,19 +34,18 @@ android {
         debug { }
     }
 
-    // Required by AGP 8.x when using a JDK newer than 17
+    // Java compatibility (AGP 8.x with newer JDK)
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
-// Ensures Kotlin uses JVM 17 bytecode (required by AGP 8.x)
+// Kotlin toolchain and JVM target
 kotlin {
     jvmToolchain(17)
 }
 
-// Forces Kotlin compiler to target JVM 17 even when running under JDK 21
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "17"
@@ -53,6 +53,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 }
 
 dependencies {
-    // Minimal TensorFlow Lite interpreter (NO Task API)
-    implementation "org.tensorflow:tensorflow-lite:2.14.0"
+    // Updated TensorFlow Lite runtime to support newer op versions
+    implementation "org.tensorflow:tensorflow-lite:2.17.0"
 }
