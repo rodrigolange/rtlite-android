@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.application' version '8.5.2'
     id 'org.jetbrains.kotlin.android' version '1.9.23'
 }
 
@@ -15,10 +15,10 @@ android {
         versionName "1.0"
 
         ndk {
-            abiFilters "arm64-v8a"  // smallest APK; correct ABI for Samsung S21 FE
+            abiFilters "arm64-v8a"  // Build only for ARM64 to minimize APK size
         }
 
-        // Ensure .tflite model is stored uncompressed inside APK
+        // Prevent .tflite files from being compressed
         aaptOptions {
             noCompress "tflite"
         }
@@ -30,13 +30,29 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug {
-            // Debug build is simpler for now; no R8 shrinking
-        }
+        debug { }
+    }
+
+    // Required by AGP 8.x when using a JDK newer than 17
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+// Ensures Kotlin uses JVM 17 bytecode (required by AGP 8.x)
+kotlin {
+    jvmToolchain(17)
+}
+
+// Forces Kotlin compiler to target JVM 17 even when running under JDK 21
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
 
 dependencies {
-    // Minimal and stable TensorFlow Lite Interpreter API only
+    // Minimal TensorFlow Lite interpreter (NO Task API)
     implementation "org.tensorflow:tensorflow-lite:2.14.0"
 }
