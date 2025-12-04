@@ -53,6 +53,20 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 }
 
 dependencies {
-    // Updated TensorFlow Lite runtime to support newer op versions
+    // Minimal AndroidX required for CameraX and Activity
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.activity:activity-ktx:1.8.2"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
+
+    // CameraX
+    def camerax_version = "1.2.3"
+    implementation "androidx.camera:camera-core:$camerax_version"
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    implementation "androidx.camera:camera-view:$camerax_version"
+
+    // TensorFlow Lite (your model requires 2.17 runtime)
     implementation "org.tensorflow:tensorflow-lite:2.17.0"
 }
+
